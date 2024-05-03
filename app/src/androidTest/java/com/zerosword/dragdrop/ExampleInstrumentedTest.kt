@@ -1,4 +1,4 @@
-package com.zerosword.template
+package com.zerosword.dragdrop
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

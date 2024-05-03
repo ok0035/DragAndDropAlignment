@@ -1,4 +1,4 @@
-package com.zerosword.template.di
+package com.zerosword.dragdrop.di
 
 import android.content.Context
 import dagger.Module

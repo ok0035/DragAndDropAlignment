@@ -1,4 +1,4 @@
-package com.zerosword.template
+package com.zerosword.dragdrop
 
 import org.junit.Test
 
