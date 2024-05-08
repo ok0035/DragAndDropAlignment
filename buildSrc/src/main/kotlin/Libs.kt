@@ -41,6 +41,7 @@ object Libs {
     const val composeUiTestJunit = "androidx.compose.ui:ui-test-junit4"
     const val composeUiTooling = "androidx.compose.ui:ui-tooling"
     const val composeUiTestManifest = "androidx.compose.ui:ui-test-manifest"
+    const val composeConstraintLayout = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     //Image
     const val glide = "com.github.bumptech.glide:glide:4.14.2" // lib + kapt

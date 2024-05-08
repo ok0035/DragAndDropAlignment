@@ -13,7 +13,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Template"
+rootProject.name = "DragAndDrop"
 include(":app")
 include(":domain")
 include(":data")

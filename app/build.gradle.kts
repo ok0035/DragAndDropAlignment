@@ -14,11 +14,11 @@ plugins {
 }
 
 android {
-    namespace = "com.zerosword.template"
+    namespace = "com.com.zerosword.dragdrop"
     compileSdk = AppConfig.compileSdkVer
 
     defaultConfig {
-        applicationId = "com.zerosword.template"
+        applicationId = "com.com.zerosword.dragdrop"
         minSdk = AppConfig.minSdkVer
         targetSdk = AppConfig.targetSdkVer
         versionCode = AppConfig.versionCode

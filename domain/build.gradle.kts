@@ -1,4 +1,5 @@
 import Libs.androidTestImplementations
+import Libs.debugImplementations
 import Libs.implementations
 import Libs.kaptAndroidTests
 import Libs.kapts
@@ -33,6 +34,10 @@ android {
     }
     buildFeatures {
         buildConfig = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = AppConfig.kotlinCompilerExtVer
     }
     compileOptions {
         sourceCompatibility = AppConfig.javaVersion
@@ -51,6 +56,10 @@ dependencies {
 
     implementations(
         listOf(
+            Libs.composeBom,
+            Libs.composeUi,
+            Libs.composeUiGraphics,
+            Libs.activityCompose,
             Libs.coreKtx,
             Libs.hilt
         )
@@ -65,12 +74,14 @@ dependencies {
     testImplementations(
         listOf(
             Libs.junit,
-            Libs.hiltAndroidTest
+            Libs.hiltAndroidTest,
         )
     )
 
     androidTestImplementations(
         listOf(
+            platform(Libs.composeBom),
+            Libs.composeUiTestJunit,
             Libs.androidxTestJunit,
             Libs.androidxEspressoCore,
             Libs.hiltAndroidTest

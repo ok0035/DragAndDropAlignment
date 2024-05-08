@@ -78,6 +78,7 @@ dependencies {
             Libs.composeUi,
             Libs.composeUiGraphics,
             Libs.composeUiToolingPreview,
+            Libs.composeConstraintLayout,
             Libs.material3,
             Libs.glide,
             Libs.glideForCompose,
