@@ -1,29 +1,7 @@
-# Android Template with MVVM/CleanArchitecture
+# Drag and drop for compose
 
 ## Project Description
-- This is a template that can be conveniently used when starting an Android project, with MVVM and Clean Architecture applied.
+- 컴포즈를 통해 드래그엔 드롭 기능을 만들었습니다. 우측 상단 편집모드를 통해 편집모드로 들어갈 수 있으며, 길게 터치한 뒤 드래그하여 정렬을 변경할 수 있습니다.
 
 ## Architecture
-This project combines the MVVM and Clean Architecture principles to ensure scalability, maintainability, and testability. Here’s a brief overview of the architecture and how each module is implemented:
-
-### MVVM Components
-- **Model** - Handles the data logic and business rules.
-- **View** - Responsible for rendering the UI and receiving user interactions, primarily composed of Compose views.
-- **ViewModel** - Acts as a bridge between the Model and the View, managing UI-related data.
-
-### Clean Architecture Layers
-- **Data Module**: Contains everything related to data handling, such as network communication, API calls, response models, and dependency injection setup.
-- **Domain Module**: Encapsulates business logic and business models, serving as an intermediary between the Data and Feature modules.
-- **Feature Module**: Comprises the UI components using Jetpack Compose and ViewModels, organizing them according to features.
-- **App Module**: Houses the application’s main components such as Activities and Fragments.
-
-Each layer is designed to be independent and interchangeable, promoting a separation of concerns that facilitates easier testing and maintenance.
-
-### Prerequisites
-- Android Studio [Iguana | 2023.2.1]
-- Minimum SDK version [24]
-- Target SDK version [34]
-
-```bash
-git clone https://github.com/ok0035/AndroidTemplate.git
-cd AndroidTemplate
+- 클린 아키텍처를 기반으로 구현했으며 [Template](https://github.com/ok0035/AndroidWithCleanArchitecture )을 기반으로 작업했습니다.
