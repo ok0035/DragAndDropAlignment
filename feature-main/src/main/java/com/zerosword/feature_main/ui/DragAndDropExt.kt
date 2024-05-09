@@ -28,9 +28,13 @@ fun <T>Modifier.dragAndDrop(
     updateSlideState: (card: T, slideState: SlideState) -> Unit,
     isDraggedAfterLongPress: Boolean,
     isHorizontal: Boolean = false,
+    disabled: Boolean = false,
     onStartDrag: () -> Unit,
     onStopDrag: (currentIndex: Int, destinationIndex: Int) -> Unit,
 ): Modifier = composed {
+
+    if(disabled) return@composed this
+
     val offsetX = remember { Animatable(0f) }
     val offsetY = remember { Animatable(0f) }
 

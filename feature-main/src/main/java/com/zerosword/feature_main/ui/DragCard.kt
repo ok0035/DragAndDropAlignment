@@ -195,6 +195,7 @@ fun DragCard(
                 updateSlideState = updateSlideState,
                 isDraggedAfterLongPress = true,
                 isHorizontal = isHorizontal,
+                disabled = !isEditMode,
                 onStartDrag = { isDragged.value = true },
                 onStopDrag = { cIndex, dIndex ->
                     isDragged.value = false
