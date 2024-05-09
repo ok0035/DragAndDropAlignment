@@ -18,7 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -28,12 +28,6 @@ import com.zerosword.domain.model.ListItemModel
 import com.zerosword.domain.model.SlideState
 import com.zerosword.resources.R
 import kotlinx.coroutines.launch
-
-private val particlesStreamRadii = mutableListOf<Float>()
-private var itemHeight = 0
-private var itemWidth = 0
-private var particleRadius = 0f
-private var slotItemDifference = 0f
 
 @ExperimentalAnimationApi
 @Composable
@@ -47,46 +41,31 @@ fun DragCard(
 ) {
 
     val density = LocalDensity.current
+    val context = LocalContext.current
+    val configuration = context.resources.configuration
+    val screenWidth = configuration.screenWidthDp
 
-    val itemWidthDp = 200.dp
-    val itemHeightDp = 300.dp
+    val itemWidthDp = (screenWidth * 0.538f).dp
+    val itemHeightDp = (screenWidth * 0.7f).dp
 
-    val draggingScale = 0.7f
+    val draggingScale = 0.515f
 
-    val itemWidthPx =
-        with(density) {
-            itemWidthDp.toPx()
-        }
-
-    val itemHeightPx =
-        with(density) {
-            itemHeightDp.toPx()
-        }
-
-    val heightAnim = remember {
-        Animatable(with(density) {
-            if (isEditMode) itemHeightDp.toPx() * draggingScale else itemHeightDp.toPx()
-        })
+    val dragScaleAnim = remember {
+        Animatable(if (isEditMode) draggingScale else 1f)
     }
 
-    val widthAnim = remember {
-        Animatable(with(density) {
-            if (isEditMode) itemWidthDp.toPx() * draggingScale else itemWidthDp.toPx()
-        })
-    }
+    val curIndex = cardList.indexOf(card)
+    val startPadding = remember { mutableStateOf(if (curIndex == 0) 40.dp else 0.dp) }
 
-    with(density) {
-
-        particleRadius = 3.dp.toPx()
-        if (particlesStreamRadii.isEmpty())
-            particlesStreamRadii.addAll(arrayOf(6.dp.toPx(), 10.dp.toPx(), 14.dp.toPx()))
-        slotItemDifference = 18.dp.toPx()
-    }
+    val dragHeight =
+        with(density) { (itemHeightDp * (if (isEditMode) draggingScale else 1f)).toPx() }.toInt()
+    val dragWidth =
+        with(density) { (itemWidthDp * (if (isEditMode) draggingScale else 1f)).toPx() }.toInt()
 
     val verticalTranslation by animateIntAsState(
         targetValue = when (slideState) {
-            SlideState.UP -> -heightAnim.value.toInt()
-            SlideState.DOWN -> heightAnim.value.toInt()
+            SlideState.UP -> -dragHeight
+            SlideState.DOWN -> dragHeight
             else -> 0
         },
         label = "",
@@ -94,8 +73,8 @@ fun DragCard(
 
     val horizontalTranslation by animateIntAsState(
         targetValue = when (slideState) {
-            SlideState.UP -> -widthAnim.value.toInt()
-            SlideState.DOWN -> widthAnim.value.toInt()
+            SlideState.UP -> -dragWidth
+            SlideState.DOWN -> dragWidth
             else -> 0
         },
         label = "",
@@ -103,8 +82,19 @@ fun DragCard(
 
     val isDragged = remember { mutableStateOf(false) }
     val zIndex = if (isDragged.value) 1.0f else 0.0f
-    val scale = if (isDragged.value) 1.05f else 1.0f
+    val pressedScale = if (isDragged.value) 1.05f else 1.0f
     val elevation = if (isDragged.value) 8.dp else 0.dp
+
+    val paddingAnimTarget = with(density) {
+        if (isEditMode) 12.dp.toPx()
+        else 0f
+    }
+
+    val paddingAnim = remember {
+        Animatable(
+            paddingAnimTarget
+        )
+    }
 
     val currentIndex = remember { mutableIntStateOf(0) }
     val destinationIndex = remember { mutableIntStateOf(0) }
@@ -112,8 +102,19 @@ fun DragCard(
     val isPlaced = remember { mutableStateOf(false) }
     val isHorizontal = true
 
-    val editModeOffsetX = -(with(density) { 60.dp.toPx() } * cardList.indexOf(card))
-    val editModeAnim = remember { Animatable(if (isEditMode) 0f else editModeOffsetX) }
+    val itemOffsetX = -(with(density) { 52.dp.toPx() } * cardList.indexOf(card))
+    val itemOffsetY = (with(density) { 52.dp.toPx() } * cardList.indexOf(card))
+    val itemOffsetXAnim = remember { Animatable(if (isEditMode) 0f else itemOffsetX) }
+    val itemOffsetYAnim = remember {
+        Animatable(
+            if (isEditMode) 0f
+            else {
+                if (cardList.indexOf(card) % 2 == 1)
+                    itemOffsetY
+                else 0f
+            }
+        )
+    }
 
     LaunchedEffect(isPlaced.value) {
         if (isPlaced.value) {
@@ -130,72 +131,67 @@ fun DragCard(
     LaunchedEffect(key1 = isEditMode) {
         println("edit mode $isEditMode")
         if (isEditMode) {
+
             launch {
-                if (editModeAnim.value == 0f) return@launch
-                editModeAnim.animateTo(0f, tween(1000))
+                paddingAnim.animateTo(paddingAnimTarget, tween(1000))
             }
+
             launch {
-                val target = with(density) { itemWidthDp.toPx() * draggingScale }
-                if (widthAnim.value == target) return@launch
-                widthAnim.animateTo(
-                    target,
-                    tween(1000)
-                )
+                if (dragScaleAnim.value == draggingScale) return@launch
+                dragScaleAnim.animateTo(draggingScale, tween(1000))
             }
+
             launch {
-                val target = with(density) {
-                    itemHeightDp.toPx() * draggingScale
-                }
-                if (heightAnim.value == target) return@launch
-                heightAnim.animateTo(
-                    target, tween(1000)
-                )
+                if (itemOffsetXAnim.value == 0f) return@launch
+                itemOffsetXAnim.animateTo(0f, tween(1000))
             }
+
+            launch {
+                if (itemOffsetYAnim.value == 0f) return@launch
+                itemOffsetYAnim.animateTo(0f, tween(1000))
+            }
+
         } else {
+
+            launch { paddingAnim.animateTo(0f, tween(1000)) }
+
+
             launch {
-                if (editModeAnim.value == editModeOffsetX) return@launch
-                editModeAnim.animateTo(editModeOffsetX, tween(1000))
+                if (dragScaleAnim.value == 1f) return@launch
+                dragScaleAnim.animateTo(1f, tween(1000))
             }
 
             launch {
-                val target = with(density) {
-                    itemWidthDp.toPx()
-                }
-
-                if (widthAnim.value == target) return@launch
-                widthAnim.animateTo(
-                    target,
-                    tween(1000)
-                )
+                if (itemOffsetXAnim.value == itemOffsetX) return@launch
+                itemOffsetXAnim.animateTo(itemOffsetX, tween(1000))
             }
+
             launch {
-                val target = with(density) {
-                    itemHeightDp.toPx()
-                }
-                if (heightAnim.value == target) return@launch
-
-                heightAnim.animateTo(
-                    target,
-                    tween(1000)
-                )
+                if (cardList.indexOf(card) % 2 == 0 || itemOffsetYAnim.value == itemOffsetY) return@launch
+                itemOffsetYAnim.animateTo(itemOffsetY, tween(1000))
             }
+
         }
     }
 
-
+    val padding = with(density) { paddingAnim.value.toDp() }
     Box(
         Modifier
-            .width(with(density) { widthAnim.value.toDp() })
-            .height(with(density) { heightAnim.value.toDp() })
-            .padding(16.dp)
-            .graphicsLayer {
-                translationX = editModeAnim.value
-            }
+            .width(itemWidthDp * dragScaleAnim.value + startPadding.value)
+            .height(itemHeightDp * dragScaleAnim.value)
+            .padding(
+                start = padding + startPadding.value,
+                end = padding,
+                top = padding,
+                bottom = padding
+            )
             .dragAndDrop(
                 card,
                 cardList,
-                itemLength = if (isHorizontal) itemWidthPx else itemHeightPx,
-                draggingScale = draggingScale,
+                itemSize = ((
+                        if (isHorizontal)
+                            with(density) { (itemWidthDp * draggingScale).toPx() }
+                        else with(density) { (itemHeightDp * draggingScale).toPx() })).toInt(),
                 updateSlideState = updateSlideState,
                 isDraggedAfterLongPress = true,
                 isHorizontal = isHorizontal,
@@ -209,19 +205,18 @@ fun DragCard(
             )
             .offset {
                 IntOffset(
-                    if (isHorizontal) horizontalTranslation else 0,
-                    if (!isHorizontal) verticalTranslation else 0
+                    (if (isHorizontal) horizontalTranslation else 0) + itemOffsetXAnim.value.toInt(),
+                    if (!isHorizontal) verticalTranslation else 0 + itemOffsetYAnim.value.toInt()
                 )
             }
             .zIndex(zIndex)
-            .scale(scaleX = scale, scaleY = scale)
+//            .scale(dragScaleAnim.value)
+            .scale(scaleX = pressedScale, scaleY = pressedScale)
     ) {
 
         ListItemView(
             modifier = Modifier
                 .fillMaxSize(),
-            with(density) { widthAnim.value.toDp() } - 32.dp,
-            with(density) { heightAnim.value.toDp() } - 32.dp,
             item = card
         )
 

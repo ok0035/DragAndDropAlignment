@@ -82,6 +82,7 @@ dependencies {
             Libs.material3,
             Libs.glide,
             Libs.glideForCompose,
+            Libs.coil,
             Libs.hilt,
             Libs.hiltForCompose
         )

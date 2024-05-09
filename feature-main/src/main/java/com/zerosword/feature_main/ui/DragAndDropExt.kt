@@ -24,8 +24,7 @@ import kotlin.math.sign
 fun <T>Modifier.dragAndDrop(
     card: T,
     cardList: MutableList<T>,
-    itemLength: Float,
-    draggingScale: Float = 0.7f,
+    itemSize: Int,
     updateSlideState: (card: T, slideState: SlideState) -> Unit,
     isDraggedAfterLongPress: Boolean,
     isHorizontal: Boolean = false,
@@ -38,7 +37,6 @@ fun <T>Modifier.dragAndDrop(
     pointerInput(Unit) {
         // Wrap in a coroutine scope to use suspend functions for touch events and animation.
         coroutineScope {
-            val itemSize = (itemLength * draggingScale).toInt()
             val itemIndex = cardList.indexOf(card)
             val offsetToSlide = itemSize / 4
             var numberOfItems = 0
@@ -63,7 +61,7 @@ fun <T>Modifier.dragAndDrop(
                     previousNumberOfItems = numberOfItems
                     numberOfItems = calculateNumberOfSlidItemsForHorizontal(
                         offsetX.value * offsetSign,
-                        (itemSize * draggingScale).toInt(),
+                        itemSize,
                         offsetToSlide,
                         previousNumberOfItems
                     )
