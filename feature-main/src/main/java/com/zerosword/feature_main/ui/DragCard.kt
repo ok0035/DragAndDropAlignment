@@ -83,7 +83,6 @@ fun DragCard(
     val isDragged = remember { mutableStateOf(false) }
     val zIndex = if (isDragged.value) 1.0f else 0.0f
     val pressedScale = if (isDragged.value) 1.05f else 1.0f
-    val elevation = if (isDragged.value) 8.dp else 0.dp
 
     val paddingAnimTarget = with(density) {
         if (isEditMode) 12.dp.toPx()
@@ -128,51 +127,51 @@ fun DragCard(
         }
     }
 
-    LaunchedEffect(key1 = isEditMode) {
-        println("edit mode $isEditMode")
-        if (isEditMode) {
-
-            launch {
-                paddingAnim.animateTo(paddingAnimTarget, tween(1000))
-            }
-
-            launch {
-                if (dragScaleAnim.value == draggingScale) return@launch
-                dragScaleAnim.animateTo(draggingScale, tween(1000))
-            }
-
-            launch {
-                if (itemOffsetXAnim.value == 0f) return@launch
-                itemOffsetXAnim.animateTo(0f, tween(1000))
-            }
-
-            launch {
-                if (itemOffsetYAnim.value == 0f) return@launch
-                itemOffsetYAnim.animateTo(0f, tween(1000))
-            }
-
-        } else {
-
-            launch { paddingAnim.animateTo(0f, tween(1000)) }
-
-
-            launch {
-                if (dragScaleAnim.value == 1f) return@launch
-                dragScaleAnim.animateTo(1f, tween(1000))
-            }
-
-            launch {
-                if (itemOffsetXAnim.value == itemOffsetX) return@launch
-                itemOffsetXAnim.animateTo(itemOffsetX, tween(1000))
-            }
-
-            launch {
-                if (cardList.indexOf(card) % 2 == 0 || itemOffsetYAnim.value == itemOffsetY) return@launch
-                itemOffsetYAnim.animateTo(itemOffsetY, tween(1000))
-            }
-
-        }
-    }
+//    LaunchedEffect(key1 = isEditMode) {
+//        println("edit mode $isEditMode")
+//        if (isEditMode) {
+//
+//            launch {
+//                paddingAnim.animateTo(paddingAnimTarget, tween(1000))
+//            }
+//
+//            launch {
+//                if (dragScaleAnim.value == draggingScale) return@launch
+//                dragScaleAnim.animateTo(draggingScale, tween(1000))
+//            }
+//
+//            launch {
+//                if (itemOffsetXAnim.value == 0f) return@launch
+//                itemOffsetXAnim.animateTo(0f, tween(1000))
+//            }
+//
+//            launch {
+//                if (itemOffsetYAnim.value == 0f) return@launch
+//                itemOffsetYAnim.animateTo(0f, tween(1000))
+//            }
+//
+//        } else {
+//
+//            launch { paddingAnim.animateTo(0f, tween(1000)) }
+//
+//
+//            launch {
+//                if (dragScaleAnim.value == 1f) return@launch
+//                dragScaleAnim.animateTo(1f, tween(1000))
+//            }
+//
+//            launch {
+//                if (itemOffsetXAnim.value == itemOffsetX) return@launch
+//                itemOffsetXAnim.animateTo(itemOffsetX, tween(1000))
+//            }
+//
+//            launch {
+//                if (cardList.indexOf(card) % 2 == 0 || itemOffsetYAnim.value == itemOffsetY) return@launch
+//                itemOffsetYAnim.animateTo(itemOffsetY, tween(1000))
+//            }
+//
+//        }
+//    }
 
     val padding = with(density) { paddingAnim.value.toDp() }
     Box(

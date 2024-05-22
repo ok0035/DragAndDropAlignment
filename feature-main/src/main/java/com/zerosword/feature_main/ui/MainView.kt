@@ -9,7 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 fun MainView() {
 //    val viewModel: MainViewModel = hiltViewModel()
 
-    Home()
+    DraggableDrawer()
 
 }
 
